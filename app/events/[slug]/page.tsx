@@ -1,4 +1,7 @@
 import BookEvent from "@/components/BookEvent";
+import EventCard from "@/components/EventCard";
+import { IEvent } from "@/database";
+import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
@@ -65,14 +68,21 @@ const EventDetailsPage = async ({
     },
   } = await request.json();
 
-  if (!description) return notFound();
+  if (!request.ok) return notFound();
 
   const bookings = 10;
+
+  const _similar = await getSimilarEventsBySlug(slug);
+  const similarEvents: IEvent[] = Array.isArray(_similar)
+    ? _similar
+    : _similar
+    ? [_similar]
+    : [];
 
   return (
     <section id="event">
       <div className="header">
-        <h1>Event Description</h1>
+        <h1>{title}</h1>
         <p className="mt-2">{description}</p>
       </div>
 
@@ -123,12 +133,12 @@ const EventDetailsPage = async ({
               label={audience}
             />
           </section>
-          <EventAgenda agendaItems={JSON.parse(agenda[0])} />
+          <EventAgenda agendaItems={agenda} />
           <section>
             <h2>About the Organizer</h2>
             <p>{organizer}</p>
           </section>
-          <EventTags tags={tags?.[0] ? JSON.parse(tags[0]) : []} />{" "}
+          <EventTags tags={tags} />{" "}
         </div>
         {/* Right side - Booking form */}
         <aside className="booking">
@@ -148,6 +158,16 @@ const EventDetailsPage = async ({
             <BookEvent />
           </div>
         </aside>
+      </div>
+
+      <div className="flex w-full flex-col gap-4 pt-20">
+        <h2>Similar Events</h2>
+        <div className="events">
+          {similarEvents.length > 0 &&
+            similarEvents.map((similarEvent: IEvent) => (
+              <EventCard key={similarEvent.title} {...similarEvent} />
+            ))}
+        </div>
       </div>
     </section>
   );

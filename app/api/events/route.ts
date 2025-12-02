@@ -8,16 +8,11 @@ export async function POST(req: NextRequest) {
     await connectDB();
 
     const formData = await req.formData();
+    const event = Object.fromEntries(formData.entries());
 
-    let event;
-
-    try {
-      event = Object.fromEntries(formData.entries());
-    } catch (e) {
-      return NextResponse.json(
-        { message: "Invalid JSON data format" },
-        { status: 400 }
-      );
+    // Normalize slug if provided (to match GET lookup normalization)
+    if (event.slug && typeof event.slug === "string") {
+      event.slug = event.slug.trim().toLowerCase();
     }
 
     const file = formData.get("image") as File;
@@ -28,6 +23,9 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    const tags = JSON.parse(formData.get("tags") as string);
+    const agenda = JSON.parse(formData.get("agenda") as string);
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -48,7 +46,11 @@ export async function POST(req: NextRequest) {
     event.image = (uploadResult as { secure_url: string }).secure_url;
 
     try {
-      const createdEvent = await Event.create(event);
+      const createdEvent = await Event.create({
+        ...event,
+        tags: tags,
+        agenda: agenda,
+      });
       return NextResponse.json(
         {
           message: "Event created successfully",
@@ -57,7 +59,9 @@ export async function POST(req: NextRequest) {
         { status: 201 }
       );
     } catch (dbError) {
-      const publicId = (uploadResult as any)?.public_id;
+      const publicId = (
+        uploadResult as { public_id?: string } | undefined
+      )?.public_id;
       if (publicId) {
         await cloudinary.uploader
           .destroy(publicId, { resource_type: "image" })
@@ -80,7 +84,7 @@ export async function GET() {
   try {
     await connectDB();
 
-    const events = await Event.find().sort({ created_at: -1 });
+    const events = await Event.find().sort({ createdAt: -1 });
 
     return NextResponse.json(
       { message: "Event fetched successfully", events },
@@ -88,7 +92,10 @@ export async function GET() {
     );
   } catch (e) {
     return NextResponse.json(
-      { message: "Event fetching failed", error: e },
+      {
+        message: "Event fetching failed",
+        error: e instanceof Error ? e.message : "Unknown error",
+      },
       { status: 500 }
     );
   }
