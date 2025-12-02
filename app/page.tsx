@@ -1,10 +1,13 @@
 import EventCard from "@/components/EventCard";
 import ExploreBtn from "@/components/ExploreBtn";
 import { IEvent } from "@/database";
+import { cacheLife } from "next/cache";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
 const Page = async () => {
+  "use cache";
+  cacheLife("hours");
   let events = [];
   try {
     const response = await fetch(`${BASE_URL}/api/events`);
@@ -14,7 +17,7 @@ const Page = async () => {
     const data = await response.json();
     events = data.events || [];
   } catch (error) {
-    console.error('Error fetching events:', error);
+    console.error("Error fetching events:", error);
     // Optionally: return error UI or empty state
   }
   return (
@@ -36,7 +39,7 @@ const Page = async () => {
           {events &&
             events.length > 0 &&
             events.map((event: IEvent) => (
-              <li key={event.title} className="list-none">
+              <li key={event.slug} className="list-none">
                 <EventCard {...event} />
               </li>
             ))}

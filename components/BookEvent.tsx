@@ -6,7 +6,7 @@ const BookEvent = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setTimeout(() => {
@@ -19,7 +19,7 @@ const BookEvent = () => {
       {submitted ? (
         <p className="text-sm">Thank you for signing up!</p>
       ) : (
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email">Email Address</label>
             <input
@@ -31,10 +31,7 @@ const BookEvent = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            className="button-submit"
-            onClick={handleSubmit}>
+          <button type="submit" className="button-submit">
             Submit
           </button>
         </form>
