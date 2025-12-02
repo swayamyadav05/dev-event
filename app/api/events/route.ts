@@ -24,8 +24,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const tags = JSON.parse(formData.get("tags") as string);
-    const agenda = JSON.parse(formData.get("agenda") as string);
+    let tags, agenda;
+    try {
+      const tagsRaw = formData.get("tags");
+      const agendaRaw = formData.get("agenda");
+      tags = tagsRaw ? JSON.parse(tagsRaw as string) : [];
+      agenda = agendaRaw ? JSON.parse(agendaRaw as string) : [];
+    } catch {
+      return NextResponse.json(
+        { message: "Invalid tags or agenda format" },
+        { status: 400 }
+      );
+    }
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
