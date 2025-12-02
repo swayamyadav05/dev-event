@@ -32,8 +32,7 @@ export default function RootLayout({
         <div className="absolute inset-0 top-0 z-[-1] min-h-screen">
           <LightRays
             raysOrigin="top-center-offset"
-            raysColor="#6366d"
-            raysSpeed={0.5}
+            raysColor="#6366f1"            raysSpeed={0.5}
             lightSpread={0.8}
             rayLength={1.4}
             followMouse={true}

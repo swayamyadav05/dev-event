@@ -46,6 +46,10 @@ async function connectDB(): Promise<mongoose.Connection> {
   if (!cached.promise) {
     const opts: mongoose.ConnectOptions = {
       bufferCommands: false, // Disable mongoose buffering
+      serverSelectionTimeoutMS: 5000, // Timeout for initial connection
+      socketTimeoutMS: 10000, // Timeout for operations
+      maxPoolSize: 10,
+      minPoolSize: 2,
     };
 
     cached.promise = mongoose
@@ -54,7 +58,6 @@ async function connectDB(): Promise<mongoose.Connection> {
         return mongooseInstance.connection;
       });
   }
-
   try {
     // Await the connection promise and cache the result
     cached.conn = await cached.promise;
