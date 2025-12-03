@@ -1,27 +1,26 @@
 import EventCard from "@/components/EventCard";
 import ExploreBtn from "@/components/ExploreBtn";
 import { IEvent } from "@/database";
-import { events } from "@/lib/constants";
 import { cacheLife } from "next/cache";
 
-// const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
 const Page = async () => {
   "use cache";
   cacheLife("hours");
 
-  // let events = [];
-  // try {
-  //   const response = await fetch(`${BASE_URL}/api/events`);
-  //   if (!response.ok) {
-  //     throw new Error(`Failed to fetch events: ${response.status}`);
-  //   }
-  //   const data = await response.json();
-  //   events = data.events || [];
-  // } catch (error) {
-  //   console.error("Error fetching events:", error);
-  //   // Optionally: return error UI or empty state
-  // }
+  let events = [];
+  try {
+    const response = await fetch(`${BASE_URL}/api/events`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch events: ${response.status}`);
+    }
+    const data = await response.json();
+    events = data.events || [];
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    // Optionally: return error UI or empty state
+  }
   return (
     <section>
       <h1 className="text-center">
