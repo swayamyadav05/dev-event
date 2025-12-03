@@ -49,6 +49,6 @@ BookingSchema.index({ eventId: 1 });
 
 // Export model (handles Next.js hot reloading)
 const Booking =
-  models.Booking || model<IBooking>("Booking", BookingSchema);
+  models?.Booking || model<IBooking>("Booking", BookingSchema);
 
 export default Booking;
