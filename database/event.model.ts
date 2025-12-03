@@ -145,6 +145,6 @@ EventSchema.pre("save", function (next) {
 });
 
 // Export model (handles Next.js hot reloading)
-const Event = models.Event || model<IEvent>("Event", EventSchema);
+const Event = models?.Event || model<IEvent>("Event", EventSchema);
 
 export default Event;

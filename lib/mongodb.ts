@@ -1,13 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 // MongoDB connection string from environment variables
 const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error(
-    'Please define the MONGODB_URI environment variable inside .env.local'
-  );
-}
 
 /**
  * Global type declaration for cached mongoose connection
@@ -37,6 +31,13 @@ if (!cached) {
  * @returns Promise that resolves to a Mongoose connection
  */
 async function connectDB(): Promise<mongoose.Connection> {
+  // Validate MONGODB_URI when connecting
+  if (!MONGODB_URI) {
+    throw new Error(
+      "Please define the MONGODB_URI environment variable inside .env.local"
+    );
+  }
+
   // Return existing connection if available
   if (cached.conn) {
     return cached.conn;

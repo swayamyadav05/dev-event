@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Temporarily disable cache components due to Turbopack crash
   cacheComponents: true,
   images: {
     remotePatterns: [
