@@ -55,6 +55,9 @@ const EventDetails = async ({
 
   const slug = await params;
   const request = await fetch(`${BASE_URL}/api/events/${slug}`);
+
+  if (!request.ok) return notFound();
+
   const {
     event: {
       _id,
@@ -73,8 +76,6 @@ const EventDetails = async ({
       tags,
     },
   } = await request.json();
-
-  if (!request.ok) return notFound();
 
   const bookings = 10;
 
